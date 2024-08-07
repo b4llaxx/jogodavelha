@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0; /* Cor de fundo geral */
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #d81b60; /* Cor rosa para o título */
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 10px;
+      border: 5px solid #d81b60; /* Borda rosa para o tabuleiro */
+      border-radius: 10px;
+      background-color: #ffe0f0; /* Cor de fundo rosa claro */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+    }
+
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      cursor: pointer;
+      background-color: #f8bbd0; /* Cor de fundo rosa para as células */
+      transition: background-color 0.3s ease;
+    }
+
+    .cell:hover {
+      background-color: #f48fb1; /* Cor de fundo rosa mais escuro ao passar o mouse */
+    }
+
+    #vencedor {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #d81b60; /* Cor rosa para a mensagem de vencedor */
+    }
+
+    #btn-reiniciar {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #d81b60; /* Cor rosa para o botão de reiniciar */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #btn-reiniciar:hover {
+      background-color: #c2185b; /* Cor rosa escuro para o botão ao passar o mouse */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tic-Tac-Toe</h1>
+    <div class="board" id="board" role="grid" aria-labelledby="gameTitle">
+      <div class="cell" aria-label="Cell 1"></div>
+      <div class="cell" aria-label="Cell 2"></div>
+      <div class="cell" aria-label="Cell 3"></div>
+      <div class="cell" aria-label="Cell 4"></div>
+      <div class="cell" aria-label="Cell 5"></div>
+      <div class="cell" aria-label="Cell 6"></div>
+      <div class="cell" aria-label="Cell 7"></div>
+      <div class="cell" aria-label="Cell 8"></div>
+      <div class="cell" aria-label="Cell 9"></div>
+    </div>
+    <div id="vencedor" role="status"></div>
+    <button id="btn-reiniciar">Reiniciar Jogo</button>
+  </div>
+
+  <script>
+    const board = document.getElementById("board");
+    const cells = board.getElementsByClassName("cell");
+    const winnerBox = document.getElementById("vencedor");
+    const resetButton = document.getElementById("btn-reiniciar");
+    let moves = 0;
+    let gameActive = true;
+
+    Array.from(cells).forEach(cell => cell.addEventListener('click', handleCellClick));
+    resetButton.addEventListener('click', resetGame);
+
+    function handleCellClick() {
+      if (gameActive && this.textContent === "") {
+        this.textContent = moves % 2 === 0 ? "X" : "O";
+        this.style.color = moves % 2 === 0 ? "#c2185b" : "#d81b60"; // Rosa mais escuro para X e rosa mais claro para O
+        moves++;
+        checkForWinner();
+      }
+    }
+
+    function checkForWinner() {
+      const winPatterns = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+      ];
+
+      for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[b].textContent === cells[c].textContent) {
+          gameActive = false;
+          cells[a].style.backgroundColor = cells[b].style.backgroundColor = cells[c].style.backgroundColor = "#f48fb1"; // Rosa para a vitória
+          winnerBox.textContent = `O '${cells[a].textContent}' Venceu!`;
+          return;
+        }
+      }
+
+      if (moves === 9) {
+        gameActive = false;
+        winnerBox.textContent = "Empate!";
+      }
+    }
+
+    function resetGame() {
+      Array.from(cells).forEach(cell => {
+        cell.textContent = "";
+        cell.style.backgroundColor = "#f8bbd0"; // Rosa para as células após reiniciar
+        cell.style.color = "#333"; // Cor do texto resetada
+      });
+      winnerBox.textContent = "";
+      moves = 0;
+      gameActive = true;
+    }
+  </script>
+</body>
+</html>
